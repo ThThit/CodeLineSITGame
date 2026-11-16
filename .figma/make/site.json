@@ -1,0 +1,10 @@
+{
+  "description": "A gamified classroom app where instructors run Java code-ordering challenges and students compete, learn, and track their progress in real time.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
