@@ -1,5 +1,7 @@
 /** Every screen in the proposal's wireframe list (§10). */
 export type Screen =
+  // Demo index (start page)
+  | "demo"
   // Instructor (screens 2–9)
   | "home"
   | "questions"

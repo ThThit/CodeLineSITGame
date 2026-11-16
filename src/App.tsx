@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { historyIndex, pages, type Screen } from "@/types/navigation";
 import { PageNavigator } from "@/components/dev/PageNavigator";
+import { DemoIndex } from "@/features/demo/DemoIndex";
 import { Home } from "@/features/instructor/Home";
 import { QuestionBank } from "@/features/instructor/QuestionBank";
 import { CreateQuestion } from "@/features/instructor/CreateQuestion";
@@ -18,11 +19,14 @@ import { StudentProgress } from "@/features/student/StudentProgress";
 /** `#game`, `#lobby`, … opens that screen directly, handy when presenting the demo. */
 function screenFromHash(): Screen {
   const hash = window.location.hash.slice(1);
-  return pages.find((p) => p.screen === hash)?.screen ?? "home";
+  if (hash === "demo") return "demo";
+  return pages.find((p) => p.screen === hash)?.screen ?? "demo";
 }
 
 function renderScreen(screen: Screen, go: (next: Screen) => void) {
   switch (screen) {
+    case "demo":
+      return <DemoIndex go={go} />;
     case "home":
       return <Home go={go} />;
     case "questions":

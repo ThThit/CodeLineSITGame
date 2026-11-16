@@ -12,16 +12,23 @@ export function StudentShell({
   title,
   back,
   progress,
+  wide = false,
 }: {
   children: ReactNode;
   go: Navigate;
   title?: string;
   back?: Screen;
   progress?: boolean;
+  /** Let the page grow to a desktop layout on wide screens (phones look the same). */
+  wide?: boolean;
 }) {
   return (
     <div className="relative min-h-screen overflow-x-clip bg-cream font-sans text-ink">
-      <div className="relative mx-auto flex min-h-screen w-full max-w-[480px] flex-col px-4 pb-6 pt-5 sm:px-5">
+      <div
+        className={`relative mx-auto flex min-h-screen w-full max-w-[480px] flex-col px-4 pb-6 pt-5 sm:px-5 ${
+          wide ? "lg:max-w-[1280px] lg:px-8" : ""
+        }`}
+      >
         <header className="relative z-10 flex items-center justify-between gap-3">
           {back ? (
             <button

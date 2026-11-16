@@ -37,6 +37,7 @@ type Drag = { line: number; x: number; y: number };
 export function StudentGame({ go }: ScreenProps) {
   const question = useMemo(() => questionStore.get(QUESTION_ID), []);
   const lines = useMemo(() => splitCode(question?.code ?? ""), [question]);
+  const steps = (question?.pseudocode ?? "").split(/\r?\n/).filter(Boolean);
 
   const { seconds } = useCountdown(ROUND_SECONDS);
   const [placed, setPlaced] = useState<number[]>(LOCKED_BY_OTHERS);
@@ -167,9 +168,12 @@ export function StudentGame({ go }: ScreenProps) {
   const selectedLeft = selected === null ? null : (attemptsLeft[selected] ?? ATTEMPTS);
 
   return (
-    <StudentShell go={go} progress>
-      <main className={`mt-4 flex min-w-0 flex-1 flex-col gap-3 ${dragging ? "select-none" : ""}`}>
-        <div className="flex items-center justify-between gap-3">
+    <StudentShell go={go} progress wide>
+      {/* Phone: one column. Desktop (lg+): pseudocode | code board | my lines. */}
+      <main
+        className={`mt-4 flex min-w-0 flex-1 flex-col gap-3 lg:grid lg:grid-cols-[260px_minmax(0,1fr)_340px] lg:content-start lg:items-start lg:gap-x-6 lg:gap-y-4 ${dragging ? "select-none" : ""}`}
+      >
+        <div className="flex items-center justify-between gap-3 lg:col-span-3">
           <div className="flex min-w-0 flex-col">
             <span className="text-[13px] font-extrabold uppercase tracking-[0.1em] text-soft">
               Round 1 · Q3 of 3
@@ -193,7 +197,7 @@ export function StudentGame({ go }: ScreenProps) {
           aria-valuenow={placed.length}
           aria-valuemin={0}
           aria-valuemax={lines.length}
-          className="h-3.5 overflow-hidden rounded-full border-[2.5px] border-ink bg-white"
+          className="h-3.5 overflow-hidden rounded-full border-[2.5px] border-ink bg-white lg:col-span-3"
         >
           <div
             className="h-full bg-mint-ink transition-[width] duration-300"
@@ -201,39 +205,61 @@ export function StudentGame({ go }: ScreenProps) {
           />
         </div>
 
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-[13px] font-extrabold uppercase tracking-[0.1em]">
-            {dragging
-              ? "Drop it on a yellow slot"
-              : selected === null
-                ? "Shared code space"
-                : "Now tap where it goes"}
-          </span>
-          <label className="flex min-h-9 cursor-pointer items-center gap-2 text-sm font-bold">
-            <input
-              type="checkbox"
-              checked={wrap}
-              onChange={(e) => setWrap(e.target.checked)}
-              className="size-4 accent-[var(--ink)]"
-            />
-            Wrap long lines
-          </label>
-        </div>
+        {/* Pseudocode: desktop only (phones rely on the projected screen). */}
+        <aside
+          aria-labelledby="pseudo-title"
+          className="hidden lg:sticky lg:top-4 lg:flex lg:flex-col lg:gap-3 lg:rounded-[22px] lg:border-[3px] lg:border-ink lg:bg-paper lg:p-5 lg:shadow-pop"
+        >
+          <h2
+            id="pseudo-title"
+            className="text-sm font-extrabold uppercase tracking-[0.1em] text-soft"
+          >
+            Pseudocode
+          </h2>
+          <ul className="flex flex-col gap-2.5">
+            {steps.map((step) => (
+              <li key={step} className="text-[15px] font-bold leading-snug">
+                {step}
+              </li>
+            ))}
+          </ul>
+        </aside>
 
-        <StudentBoard
-          lines={lines.map((l) => l.text)}
-          locked={(i) => placed.includes(i)}
-          armed={selected !== null || dragging}
-          hoverSlot={hoverSlot}
-          wrap={wrap}
-          onSlot={locked ? undefined : (slot) => selected !== null && place(slot, selected)}
-        />
+        <div className="flex min-w-0 flex-col gap-3">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[13px] font-extrabold uppercase tracking-[0.1em]">
+              {dragging
+                ? "Drop it on a yellow slot"
+                : selected === null
+                  ? "Shared code space"
+                  : "Now tap where it goes"}
+            </span>
+            <label className="flex min-h-9 cursor-pointer items-center gap-2 text-sm font-bold">
+              <input
+                type="checkbox"
+                checked={wrap}
+                onChange={(e) => setWrap(e.target.checked)}
+                className="size-4 accent-[var(--ink)]"
+              />
+              Wrap long lines
+            </label>
+          </div>
+
+          <StudentBoard
+            lines={lines.map((l) => l.text)}
+            locked={(i) => placed.includes(i)}
+            armed={selected !== null || dragging}
+            hoverSlot={hoverSlot}
+            wrap={wrap}
+            onSlot={locked ? undefined : (slot) => selected !== null && place(slot, selected)}
+          />
+        </div>
 
         {/* My lines stay pinned at the bottom while the board scrolls; they slide away during a drag. */}
         <section
           aria-label="My lines"
-          className={`sticky bottom-0 z-20 -mx-4 mt-auto border-t-[3px] border-ink bg-cream px-4 pb-4 pt-3 transition-transform duration-200 sm:-mx-5 sm:px-5 ${
-            dragging ? "translate-y-[calc(100%-56px)]" : ""
+          className={`sticky bottom-0 z-20 -mx-4 mt-auto border-t-[3px] border-ink bg-cream px-4 pb-4 pt-3 transition-transform duration-200 sm:-mx-5 sm:px-5 lg:top-4 lg:bottom-auto lg:mx-0 lg:mt-0 lg:rounded-[22px] lg:border-[3px] lg:bg-white lg:p-4 lg:shadow-pop ${
+            dragging ? "max-lg:translate-y-[calc(100%-56px)]" : ""
           }`}
         >
           <div className="flex items-baseline justify-between px-0.5">
@@ -248,7 +274,7 @@ export function StudentGame({ go }: ScreenProps) {
                   : `${tries(selectedLeft)} left`}
             </span>
           </div>
-          <div className="mt-2 flex max-h-[34vh] flex-col gap-2 overflow-y-auto pb-1 pr-1">
+          <div className="mt-2 flex max-h-[34vh] flex-col gap-2 overflow-y-auto pb-1 pr-1 lg:max-h-[calc(100dvh-180px)]">
             {!done &&
               tray.map((i) => {
                 const active = selected === i;
@@ -316,7 +342,12 @@ export function StudentGame({ go }: ScreenProps) {
         <div
           aria-hidden="true"
           className="pointer-events-none fixed inset-x-4 z-50 mx-auto max-w-[440px] -translate-y-1/2 rotate-1 rounded-[14px] border-[3px] border-ink bg-sun px-3 py-2.5 shadow-[6px_6px_0_var(--ink)]"
-          style={{ top: drag.y }}
+          // Phones: full-width card at the finger. Desktop: follows the cursor.
+          style={
+            window.innerWidth >= 1024
+              ? { top: drag.y, left: drag.x - 24, right: "auto", width: "max-content" }
+              : { top: drag.y }
+          }
         >
           <code className="whitespace-pre-wrap break-words font-mono text-sm font-bold">
             {lines[drag.line].text.trim()}

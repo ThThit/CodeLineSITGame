@@ -25,7 +25,8 @@ This is the canonical project structure. Start with task-relevant files below. O
 
 The product spec is `CodeLine_Proposed_Solution.md`. This app is a clickable UI wireframe for demos: no login, no backend, all data comes from `data/mock.ts`. Screens follow the spec's wireframe list (§10); the visual design comes from the "CodeLine Playful UI" Claude Design canvas. Open any screen directly with a hash, e.g. `#live`, `#game`.
 
-- `App.tsx` - screen switch; maps each `Screen` to its feature component (starts on `#home`)
+- `App.tsx` - screen switch; maps each `Screen` to its feature component (starts on the demo index, `#demo`)
+- `features/demo/DemoIndex.tsx` - start page for reviewers: says it is a demo and links to every screen
 - `types/navigation.ts` - `Screen`, `Navigate`, `ScreenProps`, and `pages` (the list of all pages)
 - `components/dev/PageNavigator.tsx` - floating bottom-right button listing every page, for devs and reviewers
 - `hooks/useCountdown.ts` - round timer

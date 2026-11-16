@@ -44,6 +44,23 @@ export function PageNavigator({ current, go }: { current: Screen; go: Navigate }
           className="max-h-[min(70vh,560px)] w-[min(calc(100vw-32px),340px)] overflow-y-auto rounded-[22px] border-[3px] border-ink bg-white p-3 shadow-pop-lg"
         >
           <p className="px-2 pb-2 pt-1 font-display text-lg font-bold">Jump to a page</p>
+          <button
+            type="button"
+            aria-current={current === "demo" ? "page" : undefined}
+            onClick={() => {
+              go("demo");
+              setOpen(false);
+            }}
+            className={`mb-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-2 text-left font-extrabold transition-colors ${
+              current === "demo" ? "bg-sun" : "hover:bg-paper"
+            }`}
+          >
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-ink text-cream">
+              <Icon name="dashboard" size={14} />
+            </span>
+            <span className="flex-1">Demo index</span>
+            <span className="font-mono text-xs text-soft">#demo</span>
+          </button>
           {groups.map((group) => (
             <div key={group} className="mb-2 last:mb-0">
               <p className="px-2 pb-1 pt-2 text-xs font-extrabold uppercase tracking-[0.12em] text-soft">

@@ -107,7 +107,9 @@ export function LiveGame({ go }: ScreenProps) {
   const { seconds, add } = useCountdown(90);
   const [hintSent, setHintSent] = useState(false);
   const [paused, setPaused] = useState(false);
-  const sim = useSimulatedPlacements(lines.length, texts, !paused && seconds > 0);
+  const [confirmEnd, setConfirmEnd] = useState(false);
+  // The class keeps playing while the instructor decides; only the demo simulation pauses.
+  const sim = useSimulatedPlacements(lines.length, texts, !paused && !confirmEnd && seconds > 0);
 
   const slots: Slot[] = lines.map((l, i) => ({
     text: l.text,
@@ -116,7 +118,7 @@ export function LiveGame({ go }: ScreenProps) {
     fresh: sim.fresh === i,
     rejected: sim.rejected[i] ?? null,
   }));
-  const board = [...sim.players].sort((a, b) => b.score - a.score).slice(0, 5);
+  const board = [...sim.players].sort((a, b) => b.score - a.score);
 
   return (
     // Fixed to the window on projector-size screens: nothing scrolls, nothing needs zooming out.
@@ -191,7 +193,11 @@ export function LiveGame({ go }: ScreenProps) {
               </button>
             )}
           </span>
-          <button type="button" className="btn btn-dark ml-auto" onClick={() => go("results")}>
+          <button
+            type="button"
+            className="btn btn-dark ml-auto"
+            onClick={() => setConfirmEnd(true)}
+          >
             End round <Icon name="arrow" size={18} />
           </button>
         </div>
@@ -240,11 +246,15 @@ export function LiveGame({ go }: ScreenProps) {
                   Points
                 </span>
               </div>
-              <ol className="flex flex-col gap-2">
+              <ol
+                className="-mr-1 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain pr-1"
+                aria-label="All players, highest score first"
+                tabIndex={0}
+              >
                 {board.map((p, i) => (
                   <li
                     key={p.name}
-                    className={`flex items-center gap-3 rounded-2xl border-[2.5px] px-2.5 py-1 transition-colors ${
+                    className={`flex shrink-0 items-center gap-3 rounded-2xl border-[2.5px] px-2.5 py-1 transition-colors ${
                       i < 3 ? "border-ink" : "border-line"
                     } ${i === 0 ? "bg-[#fff3c2]" : "bg-white"}`}
                   >
@@ -300,6 +310,80 @@ export function LiveGame({ go }: ScreenProps) {
             </aside>
           </div>
         </main>
+      </div>
+      {confirmEnd && (
+        <EndRoundDialog
+          locked={sim.correct}
+          total={lines.length}
+          seconds={seconds}
+          onCancel={() => setConfirmEnd(false)}
+          onConfirm={() => go("results")}
+        />
+      )}
+    </div>
+  );
+}
+
+/** Confirmation before ending the round early (the projector shows it too, so keep it clear). */
+function EndRoundDialog({
+  locked,
+  total,
+  seconds,
+  onCancel,
+  onConfirm,
+}: {
+  locked: number;
+  total: number;
+  seconds: number;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  const cancelRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    cancelRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onCancel();
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onCancel]);
+  const unplaced = total - locked;
+  return (
+    <div
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/60 p-4"
+      onClick={(e) => e.target === e.currentTarget && onCancel()}
+    >
+      <div
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="end-title"
+        aria-describedby="end-desc"
+        className="w-full max-w-[460px] rounded-[24px] border-[3px] border-ink bg-white p-6 shadow-pop-lg motion-safe:animate-in motion-safe:zoom-in-95 motion-safe:fade-in"
+      >
+        <h2 id="end-title" className="font-display text-[28px] font-bold leading-tight">
+          End round 1 now?
+        </h2>
+        <div id="end-desc" className="mt-3 flex flex-col gap-2 text-base font-bold text-soft">
+          <p>
+            {locked} of {total} lines are locked
+            {seconds > 0
+              ? ` and ${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")} is left on the clock`
+              : ""}
+            .
+          </p>
+          {unplaced > 0 && (
+            <p>
+              Students stop placing lines and the {unplaced} unplaced{" "}
+              {unplaced === 1 ? "line is" : "lines are"} revealed.
+            </p>
+          )}
+        </div>
+        <div className="mt-6 flex flex-wrap justify-end gap-3">
+          <button ref={cancelRef} type="button" className="btn btn-secondary" onClick={onCancel}>
+            Keep playing
+          </button>
+          <button type="button" className="btn btn-dark" onClick={onConfirm}>
+            End round
+          </button>
+        </div>
       </div>
     </div>
   );
