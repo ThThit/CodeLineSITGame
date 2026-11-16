@@ -1,10 +1,10 @@
 import type { ScreenProps } from "@/types/navigation";
 import { type IconName, Icon } from "@/components/common/Icon";
 import { InstructorShell } from "@/components/layout/InstructorShell";
-import { students, questions } from "@/data/mock";
-import { Dashboard } from "@/features/instructor/Dashboard";
+import { useQuestions } from "@/data/questionStore";
 
 export function Home({ go }: ScreenProps) {
+  const questionCount = useQuestions().length;
   return (
     <InstructorShell
       screen="home"
@@ -30,7 +30,7 @@ export function Home({ go }: ScreenProps) {
           icon="book"
           color="violet"
           title="Question Bank"
-          caption="24 saved questions"
+          caption={`${questionCount} saved ${questionCount === 1 ? "question" : "questions"}`}
           onClick={() => go("questions")}
         />
         <QuickCard

@@ -23,20 +23,22 @@ This is the canonical project structure. Start with task-relevant files below. O
 
 ### CodeLine source layout (`src/`)
 
-The product spec is `CodeLine_Proposed_Solution.md`. Screens follow its wireframe list (§10).
+The product spec is `CodeLine_Proposed_Solution.md`. This app is a clickable UI wireframe for demos: no login, no backend, all data comes from `data/mock.ts`. Screens follow the spec's wireframe list (§10); the visual design comes from the "CodeLine Playful UI" Claude Design canvas. Open any screen directly with a hash, e.g. `#live`, `#game`.
 
-- `App.tsx` - screen switch; maps each `Screen` to its feature component
-- `types/navigation.ts` - `Screen`, `Navigate`, `ScreenProps`
-- `types/domain.ts` - domain model (Question, Session, RoundSettings, Penalty, PlacementResult…)
-- `lib/game.ts` - pure game rules: split code, distribute lines, check and score placements (FR-SYS2–4)
+- `App.tsx` - screen switch; maps each `Screen` to its feature component (starts on `#home`)
+- `types/navigation.ts` - `Screen`, `Navigate`, `ScreenProps`, and `pages` (the list of all pages)
+- `components/dev/PageNavigator.tsx` - floating bottom-right button listing every page, for devs and reviewers
+- `hooks/useCountdown.ts` - round timer
+- `lib/game.ts` - game rules: split code, check and score placements
 - `lib/format.ts` - small display helpers
-- `data/mock.ts` - mock data used until a backend exists
+- `data/mock.ts` - sample data that drives the demo (no backend, no login)
+- `data/questionStore.ts` - in-memory question bank shared by Question Bank, the editor and Session setup (resets on refresh)
+- Styling: instructor desk pages are calmer (`.instructor-ui` rules at the end of `index.css`); student and projected screens (Lobby, Live round) stay playful
 - `components/ui/` - shadcn/ui components (radix-nova style, `components.json`). Add with `npx shadcn@latest add <name>`; don't hand-edit unless customizing
 - `components/common/` - app-specific UI (Icon, Logo, Button, Metric, QRCode). Kept separate so file names never collide with shadcn's lowercase files on case-insensitive filesystems
 - `lib/utils.ts` - shadcn's `cn()` class-merging helper
 - `components/layout/` - page shells (InstructorShell, StudentShell)
 - `components/game/` - game widgets shared by instructor and student (CodeWorkspace, FeedbackToast)
-- `features/auth/` - university-account login (screens 1 and 10)
 - `features/instructor/` - instructor screens 2–9
 - `features/student/` - student screens 11–16
 
