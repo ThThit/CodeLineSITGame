@@ -21,6 +21,25 @@ This is the canonical project structure. Start with task-relevant files below. O
 - `vite.config.ts` - Vite configuration with React, Tailwind CSS v4, and Figma Make plugins plus the `@` alias for `src`
 - `.mise.toml` - Toolchain versions for Node.js and pnpm
 
+### CodeLine source layout (`src/`)
+
+The product spec is `CodeLine_Proposed_Solution.md`. Screens follow its wireframe list (§10).
+
+- `App.tsx` - screen switch; maps each `Screen` to its feature component
+- `types/navigation.ts` - `Screen`, `Navigate`, `ScreenProps`
+- `types/domain.ts` - domain model (Question, Session, RoundSettings, Penalty, PlacementResult…)
+- `lib/game.ts` - pure game rules: split code, distribute lines, check and score placements (FR-SYS2–4)
+- `lib/format.ts` - small display helpers
+- `data/mock.ts` - mock data used until a backend exists
+- `components/ui/` - shadcn/ui components (radix-nova style, `components.json`). Add with `npx shadcn@latest add <name>`; don't hand-edit unless customizing
+- `components/common/` - app-specific UI (Icon, Logo, Button, Metric, QRCode). Kept separate so file names never collide with shadcn's lowercase files on case-insensitive filesystems
+- `lib/utils.ts` - shadcn's `cn()` class-merging helper
+- `components/layout/` - page shells (InstructorShell, StudentShell)
+- `components/game/` - game widgets shared by instructor and student (CodeWorkspace, FeedbackToast)
+- `features/auth/` - university-account login (screens 1 and 10)
+- `features/instructor/` - instructor screens 2–9
+- `features/student/` - student screens 11–16
+
 ## Dependencies
 
 - Runtime: React 19 and React DOM 19
