@@ -5,6 +5,19 @@ type Card = { screen: Screen; num: number; name: string; what: string; tryIt?: b
 
 const groups: { title: string; note: string; cards: Card[] }[] = [
   {
+    title: "Start",
+    note: "Where every user begins",
+    cards: [
+      {
+        screen: "login",
+        num: 1,
+        name: "Sign in",
+        what: "sign in with a student ID email to reach Join, or a staff email to reach instructor Home.",
+        tryIt: true,
+      },
+    ],
+  },
+  {
     title: "Instructor",
     note: "Laptop screens for preparing and reviewing sessions",
     cards: [
@@ -135,8 +148,8 @@ export function DemoIndex({ go }: ScreenProps) {
           </h1>
           <p className="mt-2.5 max-w-[62ch] text-[17px] font-semibold leading-relaxed text-soft">
             CodeLine turns the paper “put the code lines in order” exercise into a live classroom
-            game. This is a clickable wireframe for review: there is no login, no server and nothing
-            is saved. Pick any screen below to open it.
+            game. This is a clickable wireframe for review: sign-in is a mock, there is no server
+            and nothing is saved. Pick any screen below to open it.
           </p>
         </div>
 
@@ -185,8 +198,8 @@ export function DemoIndex({ go }: ScreenProps) {
         ))}
 
         <p className="text-[13px] font-semibold text-soft">
-          Numbers match the wireframe list in the CodeLine proposal. The login screens (1 and 10)
-          are left out of this demo.
+          Numbers match the wireframe list in the CodeLine proposal. Sign-in is a single mock screen
+          covering wireframes 1 and 10.
         </p>
       </div>
     </div>

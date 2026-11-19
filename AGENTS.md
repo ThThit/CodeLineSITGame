@@ -23,10 +23,11 @@ This is the canonical project structure. Start with task-relevant files below. O
 
 ### CodeLine source layout (`src/`)
 
-The product spec is `CodeLine_Proposed_Solution.md`. This app is a clickable UI wireframe for demos: no login, no backend, all data comes from `data/mock.ts`. Screens follow the spec's wireframe list (§10); the visual design comes from the "CodeLine Playful UI" Claude Design canvas. Open any screen directly with a hash, e.g. `#live`, `#game`.
+The product spec is `CodeLine_Proposed_Solution.md`. This app is a clickable UI wireframe for demos: mock sign-in only, no backend, all data comes from `data/mock.ts`. Screens follow the spec's wireframe list (§10); the visual design comes from the "CodeLine Playful UI" Claude Design canvas. Open any screen directly with a hash, e.g. `#live`, `#game`.
 
 - `App.tsx` - screen switch; maps each `Screen` to its feature component (starts on the demo index, `#demo`)
 - `features/demo/DemoIndex.tsx` - start page for reviewers: says it is a demo and links to every screen
+- `features/auth/Login.tsx` + `data/accounts.ts` - mock SIT sign-in (`#login`): a digits-only student ID email goes to Join, any other SIT email to instructor Home; passwords are not checked. `SIT_DOMAIN` sets the accepted domain
 - `types/navigation.ts` - `Screen`, `Navigate`, `ScreenProps`, and `pages` (the list of all pages)
 - `components/dev/PageNavigator.tsx` - floating bottom-right button listing every page, for devs and reviewers
 - `hooks/useCountdown.ts` - round timer

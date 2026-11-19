@@ -2,6 +2,8 @@
 export type Screen =
   // Demo index (start page)
   | "demo"
+  // Mock sign-in (screens 1 and 10)
+  | "login"
   // Instructor (screens 2–9)
   | "home"
   | "questions"
